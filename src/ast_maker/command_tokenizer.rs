@@ -118,7 +118,7 @@ mod test {
     #[test]
     fn play_chaotic() {
         let tokens = tokenize(String::from(
-            "  \t;play\t amogus\t\t--normalise\t--playback:=2.0\t;\t \t;;",
+            "  \t;play\t amogus\t\n--normalise\t--playback:=2.0\n\n\t;\t \t;\n;",
         ));
         let expected_tokens = vec![
             CmdToken::Command(String::from("play")),
