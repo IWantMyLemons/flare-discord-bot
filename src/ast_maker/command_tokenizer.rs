@@ -29,48 +29,48 @@ pub fn tokenize(command_content: String) -> Vec<CmdToken> {
         .map(|s| s.trim())
         .filter(|s| !s.is_empty());
 
-    let mut token_lines = Vec::new();
+    lines
+        .map(|line| {
+            let mut is_command_start = true;
+            let words = line
+                .split(|c: char| c.is_whitespace())
+                .map(|s| s.trim())
+                .filter(|s| !s.is_empty())
+                .map(String::from);
+            words
+                .map(|argument| convert_to_token(argument, &mut is_command_start))
+                .collect::<Vec<_>>()
+        })
+        .reduce(|a, b| [a, b].join(&CmdToken::Seperator))
+        .unwrap()
+}
 
-    for line in lines {
-        let mut start_of_command = true;
-        let words = line
-            .split(|c: char| c.is_whitespace())
-            .map(|s| s.trim())
-            .filter(|s| !s.is_empty())
-            .map(String::from);
-
-        let token_line = words
-            .map(|argument| {
-                if start_of_command {
-                    start_of_command = false;
-                    return CmdToken::Command(argument);
-                }
-                if argument == ":|" {
-                    start_of_command = true;
-                    return CmdToken::Pipe;
-                }
-                if argument == ":>" {
-                    return CmdToken::FileStream;
-                }
-
-                if let Some(stripped_argument) = argument.strip_prefix("--") {
-                    if argument.contains(":=") {
-                        let mut argument_iter = stripped_argument.splitn(2, ":=").map(String::from);
-                        return CmdToken::NamedArgument(
-                            argument_iter.next().unwrap(),
-                            argument_iter.next().unwrap(),
-                        );
-                    }
-                    return CmdToken::OptionalArgument(String::from(stripped_argument));
-                }
-
-                CmdToken::Argument(argument)
-            })
-            .collect::<Vec<_>>();
-        token_lines.push(token_line);
+/// internal function to convert a word into a token, is_command_start is an external bool
+fn convert_to_token(argument: String, is_command_start: &mut bool) -> CmdToken {
+    if *is_command_start {
+        *is_command_start = false;
+        return CmdToken::Command(argument);
+    }
+    if argument == ":|" {
+        *is_command_start = true;
+        return CmdToken::Pipe;
+    }
+    if argument == ":>" {
+        return CmdToken::FileStream;
     }
 
-    token_lines.join(&CmdToken::Seperator)
+    if let Some(stripped_argument) = argument.strip_prefix("--") {
+        if argument.contains(":=") {
+            let mut argument_iter = stripped_argument.splitn(2, ":=").map(String::from);
+            return CmdToken::NamedArgument(
+                argument_iter.next().unwrap(),
+                argument_iter.next().unwrap(),
+            );
+        }
+        return CmdToken::OptionalArgument(String::from(stripped_argument));
+    }
+
+    CmdToken::Argument(argument)
 }
 
 #[cfg(test)]
