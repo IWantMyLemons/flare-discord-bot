@@ -1,4 +1,17 @@
 #[derive(Debug, PartialEq, Clone)]
+/// A token that usually makes up a word in a command
+///
+/// Normally it's formatted as
+///
+/// `Command Argument Argument --OptionalArgument --Named=Argument`
+///
+/// Additionally,
+///
+/// [`CmdToken::Pipe`] is derived from `:|`
+///
+/// [`CmdToken::FileStream`] is derived from `:>`
+///
+/// [`CmdToken::Seperator`] is derived from `;`
 pub enum CmdToken {
     Command(String),
     Argument(String),
@@ -9,12 +22,12 @@ pub enum CmdToken {
     Seperator,
 }
 
+/// Turns the content of a message into a `Vec<CmdToken>`
 pub fn tokenize(command_content: String) -> Vec<CmdToken> {
     let lines = command_content
         .split(';')
         .map(|s| s.trim())
-        .filter(|s| !s.is_empty())
-        .collect::<Vec<_>>();
+        .filter(|s| !s.is_empty());
 
     let mut token_lines = Vec::new();
 
