@@ -1,4 +1,4 @@
-mod ast_maker;
+pub mod ast_maker;
 
 use std::env;
 
