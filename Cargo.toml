@@ -6,20 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-<<<<<<< HEAD
-serenity = { version = "0.12", default-features = false, features = [
-    "client",
-    "gateway",
-    "rustls_backend",
-    "model",
+serenity = { version = "0.12", features = [
+    "voice",
 ] }
 songbird = { version = "0.4" }
 tokio = { version = "1.35", features = [
     "macros",
     "rt-multi-thread",
 ] }
-=======
-serenity = { version = "0.12", features = ["voice"] }
-songbird = { version = "0.4" }
-tokio = { version = "1.35", features = ["macros", "rt-multi-thread"] }
->>>>>>> 88d068905a733b2e126f6acc64e672733fd9234f

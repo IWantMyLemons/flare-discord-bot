@@ -13,12 +13,9 @@ struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-<<<<<<< HEAD
         if !msg.content.starts_with(';') {
             return;
         }
-=======
->>>>>>> 88d068905a733b2e126f6acc64e672733fd9234f
         if msg.content.eq_ignore_ascii_case(";ping") {
             if let Err(e) = msg.channel_id.say(&ctx.http, "Pong :3").await {
                 println!("Error sending message: {e}");
