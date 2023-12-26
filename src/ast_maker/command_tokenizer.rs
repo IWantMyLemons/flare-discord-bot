@@ -11,8 +11,6 @@ pub enum CmdToken {
 
 pub fn tokenize(command_content: String) -> Vec<CmdToken> {
     let lines = command_content
-        .strip_prefix(';')
-        .unwrap_or(&command_content)
         .split(';')
         .map(|s| s.trim())
         .filter(|s| !s.is_empty())
