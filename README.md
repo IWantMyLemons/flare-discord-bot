@@ -16,3 +16,4 @@ A discord bot written in rust using serenity. This bot exists as a way to learn 
 6. Run `cargo run --release`
 
 > Why tho lmao
+t
