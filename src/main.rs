@@ -16,6 +16,9 @@ impl EventHandler for Handler {
         if !msg.content.starts_with(';') {
             return;
         }
+
+        let tokens = lexer::TokenStream::new(msg.content.as_str());
+
         if msg.content.eq_ignore_ascii_case(";ping") {
             if let Err(e) = msg.channel_id.say(&ctx.http, "Pong :3").await {
                 println!("Error sending message: {e}");
