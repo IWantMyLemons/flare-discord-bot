@@ -25,15 +25,6 @@ pub enum Token {
 #[derive(Debug, Default)]
 pub struct TokenStream(Vec<Token>);
 
-impl IntoIterator for TokenStream {
-    type Item = Token;
-    type IntoIter = std::vec::IntoIter<Self::Item>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.0.into_iter()
-    }
-}
-
 impl TokenStream {
     pub fn new(command: &str) -> TokenStream {
         let tokens = command
