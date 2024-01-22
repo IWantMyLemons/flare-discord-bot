@@ -85,15 +85,15 @@ mod test {
     #[test]
     fn ping() {
         let tokens = TokenStream::new(";ping");
-        let expected_tokens = vec![Token::Command(String::from("ping"))];
+        let expected_tokens = vec![Token::Command("ping".to_string())];
         assert_eq!(tokens.0, expected_tokens);
     }
     #[test]
     fn play_simple() {
         let tokens = TokenStream::new(";play amogus");
         let expected_tokens = vec![
-            Token::Command(String::from("play")),
-            Token::Argument(String::from("amogus")),
+            Token::Command("play".to_string()),
+            Token::Argument("amogus".to_string()),
         ];
         assert_eq!(tokens.0, expected_tokens);
     }
@@ -101,10 +101,10 @@ mod test {
     fn play_args() {
         let tokens = TokenStream::new(";play amogus --normalise --playback:=2.0");
         let expected_tokens = vec![
-            Token::Command(String::from("play")),
-            Token::Argument(String::from("amogus")),
-            Token::OptionalArgument(String::from("normalise")),
-            Token::NamedArgument(String::from("playback"), String::from("2.0")),
+            Token::Command("play".to_string()),
+            Token::Argument("amogus".to_string()),
+            Token::OptionalArgument("normalise".to_string()),
+            Token::NamedArgument("playback".to_string(), "2.0".to_string()),
         ];
         assert_eq!(tokens.0, expected_tokens);
     }
@@ -112,11 +112,11 @@ mod test {
     fn play_pipes() {
         let tokens = TokenStream::new(";random 1 10 :| jump");
         let expected_tokens = vec![
-            Token::Command(String::from("random")),
-            Token::Argument(String::from("1")),
-            Token::Argument(String::from("10")),
+            Token::Command("random".to_string()),
+            Token::Argument("1".to_string()),
+            Token::Argument("10".to_string()),
             Token::Pipe,
-            Token::Command(String::from("jump")),
+            Token::Command("jump".to_string()),
         ];
         assert_eq!(tokens.0, expected_tokens);
     }
@@ -125,10 +125,10 @@ mod test {
         let tokens =
             TokenStream::new(";play\t amogus\t\n--normalise\t--playback:=2.0\n\n\t;\t \t;ping\n;");
         let expected_tokens = vec![
-            Token::Command(String::from("play")),
-            Token::Argument(String::from("amogus")),
-            Token::OptionalArgument(String::from("normalise")),
-            Token::NamedArgument(String::from("playback"), String::from("2.0")),
+            Token::Command("play".to_string()),
+            Token::Argument("amogus".to_string()),
+            Token::OptionalArgument("normalise".to_string()),
+            Token::NamedArgument("playback".to_string(), "2.0".to_string()),
             Token::Seperator,
             Token::Command("ping".to_string()),
         ];
