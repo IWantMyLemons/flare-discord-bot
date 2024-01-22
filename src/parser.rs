@@ -1,10 +1,8 @@
-use std::sync::Arc;
-
 use super::lexer;
 
 pub struct Ast {
     token: lexer::Token,
-    children: Vec<Arc<Ast>>,
+    children: Vec<Ast>,
 }
 
 impl Ast {
