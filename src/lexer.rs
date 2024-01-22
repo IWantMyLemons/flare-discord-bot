@@ -43,7 +43,6 @@ fn lex_line(line: &str) -> Vec<Token> {
     let mut is_command_start = true;
 
     line.split(|c: char| c.is_whitespace())
-        .map(|s| s.trim())
         .filter(|s| !s.is_empty())
         .map(|word| {
             if is_command_start {
@@ -124,12 +123,14 @@ mod test {
     #[test]
     fn play_chaotic() {
         let tokens =
-            TokenStream::new("  \t;play\t amogus\t\n--normalise\t--playback:=2.0\n\n\t;\t \t;\n;");
+            TokenStream::new(";play\t amogus\t\n--normalise\t--playback:=2.0\n\n\t;\t \t;ping\n;");
         let expected_tokens = vec![
             Token::Command(String::from("play")),
             Token::Argument(String::from("amogus")),
             Token::OptionalArgument(String::from("normalise")),
             Token::NamedArgument(String::from("playback"), String::from("2.0")),
+            Token::Seperator,
+            Token::Command("ping".to_string()),
         ];
         assert_eq!(tokens.0, expected_tokens);
     }
