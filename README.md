@@ -1,6 +1,6 @@
 # Flare Discord Bot :3
 ## What's this?
-A discord bot written in rust using serenity. This bot exists as a way to learn rust and _do things_ with it.
+A discord bot written in rust using serenity. This bot exists as a way for me to learn rust and _do things_ with it.
 
 ## Dependencies
 - Opus - if on Linux, do `apt install libopus-dev` on Ubuntu / `pacman -S opus` on Arch
