@@ -1,4 +1,4 @@
-pub mod ast_maker;
+pub mod lexer;
 
 use std::env;
 

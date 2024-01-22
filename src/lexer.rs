@@ -1,0 +1,145 @@
+#[derive(Debug, PartialEq, Clone)]
+/// A token that usually makes up a word in a command
+///
+/// Normally it's formatted as
+///
+/// `Command Argument Argument --OptionalArgument --Named=Argument`
+///
+/// Additionally,
+///
+/// [`CmdToken::Pipe`] is derived from `:|`
+///
+/// [`CmdToken::FileStream`] is derived from `:>`
+///
+/// [`CmdToken::Seperator`] is derived from `;`
+pub enum Token {
+    Command(String),
+    Argument(String),
+    NamedArgument(String, String),
+    OptionalArgument(String),
+    Pipe,
+    FileStream,
+    Seperator,
+}
+
+#[derive(Debug, Default)]
+pub struct TokenStream(Vec<Token>);
+
+impl IntoIterator for TokenStream {
+    type Item = Token;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+
+impl TokenStream {
+    pub fn new(command: &str) -> TokenStream {
+        let tokens = command
+            .split(';')
+            .map(|s| s.trim())
+            .filter(|s| !s.is_empty())
+            .map(lex_line)
+            .reduce(|a, b| [a, b].join(&Token::Seperator))
+            .unwrap_or(vec![]);
+
+        TokenStream(tokens)
+    }
+}
+
+fn lex_line(line: &str) -> Vec<Token> {
+    let mut is_command_start = true;
+
+    line.split(|c: char| c.is_whitespace())
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty())
+        .map(|word| {
+            if is_command_start {
+                is_command_start = false;
+                return Token::Command(word.to_string());
+            }
+            if word == ":|" {
+                is_command_start = true;
+                return Token::Pipe;
+            }
+            if word == ":>" {
+                return Token::FileStream;
+            }
+
+            if let Some(stripped_argument) = word.strip_prefix("--") {
+                if word.contains(":=") {
+                    let mut argument_iter = stripped_argument.splitn(2, ":=").map(String::from);
+                    return Token::NamedArgument(
+                        argument_iter.next().unwrap_or("".to_string()),
+                        argument_iter.next().unwrap_or("".to_string()),
+                    );
+                }
+                return Token::OptionalArgument(stripped_argument.to_string());
+            }
+
+            Token::Argument(word.to_string())
+        })
+        .collect::<Vec<Token>>()
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn empty() {
+        let tokens = TokenStream::new(";");
+        assert!(tokens.0.is_empty());
+    }
+    #[test]
+    fn ping() {
+        let tokens = TokenStream::new(";ping");
+        let expected_tokens = vec![Token::Command(String::from("ping"))];
+        assert_eq!(tokens.0, expected_tokens);
+    }
+    #[test]
+    fn play_simple() {
+        let tokens = TokenStream::new(";play amogus");
+        let expected_tokens = vec![
+            Token::Command(String::from("play")),
+            Token::Argument(String::from("amogus")),
+        ];
+        assert_eq!(tokens.0, expected_tokens);
+    }
+    #[test]
+    fn play_args() {
+        let tokens = TokenStream::new(";play amogus --normalise --playback:=2.0");
+        let expected_tokens = vec![
+            Token::Command(String::from("play")),
+            Token::Argument(String::from("amogus")),
+            Token::OptionalArgument(String::from("normalise")),
+            Token::NamedArgument(String::from("playback"), String::from("2.0")),
+        ];
+        assert_eq!(tokens.0, expected_tokens);
+    }
+    #[test]
+    fn play_pipes() {
+        let tokens = TokenStream::new(";random 1 10 :| jump");
+        let expected_tokens = vec![
+            Token::Command(String::from("random")),
+            Token::Argument(String::from("1")),
+            Token::Argument(String::from("10")),
+            Token::Pipe,
+            Token::Command(String::from("jump")),
+        ];
+        assert_eq!(tokens.0, expected_tokens);
+    }
+    #[test]
+    fn play_chaotic() {
+        let tokens =
+            TokenStream::new("  \t;play\t amogus\t\n--normalise\t--playback:=2.0\n\n\t;\t \t;\n;");
+        let expected_tokens = vec![
+            Token::Command(String::from("play")),
+            Token::Argument(String::from("amogus")),
+            Token::OptionalArgument(String::from("normalise")),
+            Token::NamedArgument(String::from("playback"), String::from("2.0")),
+        ];
+        assert_eq!(tokens.0, expected_tokens);
+    }
+}
