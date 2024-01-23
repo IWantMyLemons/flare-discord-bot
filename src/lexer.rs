@@ -23,7 +23,10 @@ pub enum Token {
 }
 
 #[derive(Debug, Default)]
-pub struct TokenStream(Vec<Token>);
+pub struct TokenStream {
+    tokens: Vec<Token>,
+    curr: usize,
+}
 
 impl TokenStream {
     pub fn new(command: &str) -> TokenStream {
@@ -35,7 +38,16 @@ impl TokenStream {
             .reduce(|a, b| [a, b].join(&Token::Seperator))
             .unwrap_or(vec![]);
 
-        TokenStream(tokens)
+        TokenStream { tokens, curr: 0 }
+    }
+}
+
+impl Iterator for TokenStream {
+    type Item = Token;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.curr += 1;
+        self.tokens.get(self.curr - 1).cloned()
     }
 }
 
@@ -80,13 +92,13 @@ mod test {
     #[test]
     fn empty() {
         let tokens = TokenStream::new(";");
-        assert!(tokens.0.is_empty());
+        assert!(tokens.tokens.is_empty());
     }
     #[test]
     fn ping() {
         let tokens = TokenStream::new(";ping");
         let expected_tokens = vec![Token::Command("ping".to_string())];
-        assert_eq!(tokens.0, expected_tokens);
+        assert_eq!(tokens.tokens, expected_tokens);
     }
     #[test]
     fn play_simple() {
@@ -95,7 +107,7 @@ mod test {
             Token::Command("play".to_string()),
             Token::Argument("amogus".to_string()),
         ];
-        assert_eq!(tokens.0, expected_tokens);
+        assert_eq!(tokens.tokens, expected_tokens);
     }
     #[test]
     fn play_args() {
@@ -106,7 +118,7 @@ mod test {
             Token::OptionalArgument("normalise".to_string()),
             Token::NamedArgument("playback".to_string(), "2.0".to_string()),
         ];
-        assert_eq!(tokens.0, expected_tokens);
+        assert_eq!(tokens.tokens, expected_tokens);
     }
     #[test]
     fn play_pipes() {
@@ -118,7 +130,7 @@ mod test {
             Token::Pipe,
             Token::Command("jump".to_string()),
         ];
-        assert_eq!(tokens.0, expected_tokens);
+        assert_eq!(tokens.tokens, expected_tokens);
     }
     #[test]
     fn play_chaotic() {
@@ -132,6 +144,6 @@ mod test {
             Token::Seperator,
             Token::Command("ping".to_string()),
         ];
-        assert_eq!(tokens.0, expected_tokens);
+        assert_eq!(tokens.tokens, expected_tokens);
     }
 }
