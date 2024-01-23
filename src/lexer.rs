@@ -44,29 +44,7 @@ impl TokenStream {
     }
 }
 
-impl Iterator for TokenStream {
-    type Item = Token;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.curr += 1;
-        self.tokens.get(self.curr - 1).cloned()
-    }
-}
-
-impl Index<usize> for TokenStream {
-    type Output = Token;
-
-    fn index(&self, index: usize) -> &Self::Output {
-        &self.tokens[index]
-    }
-}
-
-impl IndexMut<usize> for TokenStream {
-    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        &mut self.tokens[index]
-    }
-}
-
+/// Tokenizes(lexes?) a line, used in [`TokenStream::new()`]
 fn lex_line(line: &str) -> Vec<Token> {
     let mut is_command_start = true;
 
@@ -99,6 +77,29 @@ fn lex_line(line: &str) -> Vec<Token> {
             Token::Argument(word.to_string())
         })
         .collect::<Vec<Token>>()
+}
+
+impl Iterator for TokenStream {
+    type Item = Token;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.curr += 1;
+        self.tokens.get(self.curr - 1).cloned()
+    }
+}
+
+impl Index<usize> for TokenStream {
+    type Output = Token;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.tokens[index]
+    }
+}
+
+impl IndexMut<usize> for TokenStream {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        &mut self.tokens[index]
+    }
 }
 
 #[cfg(test)]
