@@ -31,6 +31,7 @@ impl EventHandler for Handler {
         println!("{} is connected! :D", ready.user.name);
     }
 }
+
 #[tokio::main]
 async fn main() {
     // Configure client with discord token
