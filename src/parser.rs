@@ -7,7 +7,7 @@ pub struct Ast {
 }
 
 impl Ast {
-    pub fn new(_tokens: lexer::TokenStream) -> Ast {
+    pub fn build(mut _tokens: lexer::TokenStream) -> Option<Ast> {
         todo!()
     }
 }
@@ -28,6 +28,6 @@ mod test {
                 children: vec![],
             }],
         };
-        assert_eq!(Ast::new(tokens), expected_ast);
+        assert_eq!(Ast::build(tokens).unwrap(), expected_ast);
     }
 }
