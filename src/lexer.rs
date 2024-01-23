@@ -106,6 +106,18 @@ mod test {
     use super::*;
 
     #[test]
+    fn subscript_test() {
+        let tokens = TokenStream::new(";play amogus sussy");
+        let expected_tokens = vec![
+            Token::Command("play".to_string()),
+            Token::Argument("amogus".to_string()),
+            Token::Argument("sussy".to_string()),
+        ];
+        assert_eq!(tokens[0], expected_tokens[0]);
+        assert_eq!(tokens[1], expected_tokens[1]);
+        assert_eq!(tokens[2], expected_tokens[2]);
+    }
+    #[test]
     fn empty() {
         let tokens = TokenStream::new(";");
         assert!(tokens.tokens.is_empty());
