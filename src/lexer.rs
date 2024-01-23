@@ -1,3 +1,5 @@
+use std::ops::{Index, IndexMut};
+
 #[derive(Debug, PartialEq, Clone)]
 /// A token that usually makes up a word in a command
 ///
@@ -48,6 +50,20 @@ impl Iterator for TokenStream {
     fn next(&mut self) -> Option<Self::Item> {
         self.curr += 1;
         self.tokens.get(self.curr - 1).cloned()
+    }
+}
+
+impl Index<usize> for TokenStream {
+    type Output = Token;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.tokens[index]
+    }
+}
+
+impl IndexMut<usize> for TokenStream {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        &mut self.tokens[index]
     }
 }
 
