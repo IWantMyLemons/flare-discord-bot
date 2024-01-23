@@ -24,7 +24,7 @@ pub enum Token {
     Seperator,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct TokenStream {
     tokens: Vec<Token>,
     curr: usize,
