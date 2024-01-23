@@ -7,7 +7,7 @@ pub struct Ast {
 }
 
 impl Ast {
-    pub fn new(tokens: lexer::TokenStream) -> Ast {
+    pub fn new(_tokens: lexer::TokenStream) -> Ast {
         todo!()
     }
 }
