@@ -14,9 +14,8 @@ impl Ast {
 
 #[cfg(test)]
 mod test {
-    use crate::lexer::Token;
-
     use super::*;
+    use crate::lexer::Token;
 
     #[test]
     fn parse_simple() {
