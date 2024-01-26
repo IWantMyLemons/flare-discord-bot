@@ -16,7 +16,7 @@ impl Ast {
 mod test {
     use super::*;
 
-    // #[test]
+    #[test]
     fn parse_simple() {
         let tokens = TokenStream::new(";play amogus");
         let expected_ast = Ast {
@@ -29,7 +29,7 @@ mod test {
         assert_eq!(Ast::build(tokens).unwrap(), expected_ast);
     }
 
-    // #[test]
+    #[test]
     fn parse_branching() {
         let tokens = TokenStream::new(";random 1 10 :|jump");
         let expected_ast = Ast {
