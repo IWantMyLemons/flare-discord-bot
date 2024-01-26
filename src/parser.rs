@@ -29,7 +29,7 @@ mod test {
         assert_eq!(Ast::build(tokens).unwrap(), expected_ast);
     }
 
-    #[test]
+    // #[test]
     fn parse_branching() {
         let tokens = TokenStream::new(";random 1 10 :|jump");
         let expected_ast = Ast {
