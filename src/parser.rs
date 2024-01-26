@@ -28,4 +28,26 @@ mod test {
         };
         assert_eq!(Ast::build(tokens).unwrap(), expected_ast);
     }
+
+    #[test]
+    fn parse_branching() {
+        let tokens = TokenStream::new(";random 1 10 :|jump");
+        let expected_ast = Ast {
+            token: Token::Command("jump".to_string()),
+            children: vec![Ast {
+                token: Token::Command("random".to_string()),
+                children: vec![
+                    Ast {
+                        token: Token::Argument("1".to_string()),
+                        children: vec![],
+                    },
+                    Ast {
+                        token: Token::Argument("10".to_string()),
+                        children: vec![],
+                    },
+                ],
+            }],
+        };
+        assert_eq!(Ast::build(tokens).unwrap(), expected_ast);
+    }
 }
