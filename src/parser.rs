@@ -7,7 +7,7 @@ pub struct Ast {
 }
 
 impl Ast {
-    pub fn build(_tokens: TokenStream) -> Option<Ast> {
+    pub fn vec_new(_tokens: TokenStream) -> Vec<Ast> {
         todo!()
     }
 }
@@ -26,7 +26,7 @@ mod test {
                 children: vec![],
             }],
         };
-        assert_eq!(Ast::build(tokens).unwrap(), expected_ast);
+        assert_eq!(Ast::vec_new(tokens)[0], expected_ast);
     }
 
     #[test]
@@ -48,6 +48,6 @@ mod test {
                 ],
             }],
         };
-        assert_eq!(Ast::build(tokens).unwrap(), expected_ast);
+        assert_eq!(Ast::vec_new(tokens)[0], expected_ast);
     }
 }
