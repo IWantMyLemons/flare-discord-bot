@@ -13,7 +13,8 @@ struct Secrets {
 
 #[tokio::main]
 async fn main() {
-    let secrets = load_secrets("Secrets.toml").expect("Secrets file not found");
+    // get secrets :3
+    let secrets = load_secrets("Secrets.toml").unwrap();
 
     // Configure client with discord token
     let token = secrets.discord_token.expect("Discord token not found");
