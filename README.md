@@ -12,7 +12,7 @@ A discord bot written in rust using serenity. This bot exists as a way for me to
 2. Download zip
 3. Extract to folder
 4. cd into the folder containing Cargo.toml
-5. Set the `DISCORD_TOKEN` environment variable
+5. Set `discord_token` in a `Secrets.toml`
 6. Run `cargo run --release`
 
 > Why tho lmao
