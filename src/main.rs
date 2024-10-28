@@ -24,6 +24,7 @@ async fn main() {
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;
 
+    // Set custom message handler
     let mut handler = Handler {
         options: poise::FrameworkOptions {
             commands: vec![],
