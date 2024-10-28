@@ -1,14 +1,22 @@
 mod event_handler;
 use event_handler::Handler;
 
-use std::env;
-
+use core::str;
+use std::fs;
+use serde::Deserialize;
 use serenity::prelude::*;
+
+#[derive(Debug, Deserialize)]
+struct Secrets {
+    pub discord_token: Option<String>
+}
 
 #[tokio::main]
 async fn main() {
+    let secrets = load_secrets("Secrets.toml").expect("Secrets file not found");
+
     // Configure client with discord token
-    let token = env::var("DISCORD_TOKEN").expect("Discord token not found");
+    let token = secrets.discord_token.expect("Discord token not found");
 
     // Setup gateway intents
     let intents = GatewayIntents::GUILD_MESSAGES
@@ -35,4 +43,11 @@ async fn main() {
     if let Err(why) = client.start().await {
         println!("Client error: {why:?}");
     }
+}
+
+fn load_secrets(filepath: &str) -> Result<Secrets, Box<dyn std::error::Error + 'static>> {
+    let file = fs::read(filepath)?;
+    let file_contents = str::from_utf8(file.as_slice())?;
+    let secrets: Secrets = toml::from_str(file_contents)?;
+    Ok(secrets)
 }
