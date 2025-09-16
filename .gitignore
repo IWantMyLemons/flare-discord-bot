@@ -2,4 +2,4 @@
 /.vscode
 
 # Hide my discord token :P
-/Secrets.toml
+/.env
