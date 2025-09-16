@@ -1,14 +1,9 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+use serenity::prelude::*;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[derive(Debug, Default)]
+pub struct FlareFramework {}
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+#[serenity::async_trait]
+impl serenity::all::Framework for FlareFramework {
+    async fn dispatch(&self, _ctx: Context, _event: serenity::all::FullEvent) {}
 }

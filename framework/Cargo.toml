@@ -4,3 +4,11 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+tokio = {version = "1.47", features = ["macros", "rt-multi-thread"]}
+
+[dependencies.serenity]
+version = "0.12"
+default-features = false
+features = [
+    "framework",
+]

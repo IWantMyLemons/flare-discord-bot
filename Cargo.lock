@@ -105,6 +105,7 @@ name = "bot"
 version = "0.1.0"
 dependencies = [
  "dotenvy",
+ "framework",
  "macros",
  "serenity",
  "tokio",
@@ -383,6 +384,10 @@ dependencies = [
 [[package]]
 name = "framework"
 version = "0.1.0"
+dependencies = [
+ "serenity",
+ "tokio",
+]
 
 [[package]]
 name = "futures"
