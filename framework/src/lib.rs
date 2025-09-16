@@ -1,9 +1,6 @@
-use serenity::prelude::*;
+pub mod structs;
+pub mod framework;
 
-#[derive(Debug, Default)]
-pub struct FlareFramework {}
+pub use framework::FlareFramework;
 
-#[serenity::async_trait]
-impl serenity::all::Framework for FlareFramework {
-    async fn dispatch(&self, _ctx: Context, _event: serenity::all::FullEvent) {}
-}
+pub type BoxFuture<'a, T> = std::pin::Pin<Box<dyn std::future::Future<Output = T> + Send + 'a>>;

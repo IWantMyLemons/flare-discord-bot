@@ -9,10 +9,13 @@ async fn main() {
 
     let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
 
-    let intents = GatewayIntents::MESSAGE_CONTENT;
+    let intents = GatewayIntents::GUILD_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
 
     let mut client = Client::builder(token, intents)
-        .framework(FlareFramework::default())
+        .framework(
+            FlareFramework::builder()
+                .build(),
+        )
         .await
         .expect("Err creating client");
 
