@@ -1,5 +1,6 @@
 pub mod structs;
 pub mod framework;
+pub mod handlers;
 
 pub mod prelude {
     pub use crate::framework::FlareFramework;

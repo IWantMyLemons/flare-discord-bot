@@ -1,15 +1,21 @@
 use std::env;
 
-use serenity::{all::{Framework, FullEvent}, prelude::*};
+use serenity::{
+    all::{Framework, FullEvent},
+    prelude::*,
+};
 
 pub mod builder;
 
-use crate::{structs::command::PrefixCommand, framework::builder::FlareFrameworkBuilder};
+use crate::{
+    framework::builder::FlareFrameworkBuilder, handlers::message_handler::run_command,
+    structs::command::PrefixCommand,
+};
 
 #[derive(Debug)]
 pub struct FlareFramework {
-    prefix: String,
-    commands: Vec<PrefixCommand>,
+    pub prefix: String,
+    pub commands: Vec<PrefixCommand>,
 }
 
 impl FlareFramework {
@@ -24,14 +30,14 @@ impl Framework for FlareFramework {
     async fn dispatch(&self, ctx: Context, event: FullEvent) {
         match event {
             FullEvent::Message { new_message } => {
-                if !new_message.content.starts_with(&self.prefix) {
-                    return;
+                if let Err(error_message) = run_command(self, &ctx, &new_message).await {
+                    new_message
+                        .channel_id
+                        .send_message(ctx, error_message)
+                        .await
+                        .unwrap();
                 }
-                if new_message.channel_id == env::var("DEBUG_CHANNEL").unwrap().parse::<u64>().unwrap() {
-                    let content = new_message.content;
-                    println!("got message: {content}")
-                }
-            },
+            }
             _ => (),
         };
     }
