@@ -1,9 +1,6 @@
 use std::env;
 
-use framework::{
-    prelude::*,
-    structs::{command::PrefixCommand, prefix::PrefixContext},
-};
+use framework::prelude::*;
 use serenity::{all::CreateMessage, prelude::*};
 
 /// Replies with "pong!"
