@@ -10,6 +10,16 @@ async fn ping() -> impl Into<CommandResult> {
     CreateMessage::new().content("pong!")
 }
 
+#[command]
+/// Concats two strings together
+async fn cat(a: String, b: String) -> impl Into<CommandResult> {
+    let res = format!("{a}{b}");
+    CommandResult {
+        message: Some(CreateMessage::new().content(res.clone())),
+        value: Some(res),
+    }
+}
+
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().expect(".env file not found");

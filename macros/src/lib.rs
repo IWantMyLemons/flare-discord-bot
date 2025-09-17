@@ -19,28 +19,30 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
         }
     });
 
-    // ensure first argument is a PrefixContext, changing the first argument if necessary
-    let _context_ident: Ident = if let Some(arg) = function.sig.inputs.first()
+    let mut _args = function.sig.inputs.iter();
+
+    // ensure the only argument is a PrefixContext, changing the first argument if necessary
+    let context_ident: Ident = if let Some(arg) = function.sig.inputs.first()
         && let FnArg::Typed(pat_type) = arg
         && let Type::Path(type_path) = pat_type.ty.as_ref()
-        && type_path.path.is_ident("PrefixContext")
+        && let Some(last_segment) = type_path.path.segments.last()
+        && last_segment.ident == "PrefixContext"
+        && let Pat::Ident(pat_ident) = pat_type.pat.as_ref()
+        && pat_ident.ident != "_"
     {
-        match pat_type.pat.as_ref() {
-            Pat::Ident(pat_ident) => {pat_ident.ident.clone()}
-            _ => { panic!("No identifier found") }
-        } 
+        pat_ident.ident.clone()
     } else {
         let arg = syn::parse(quote! {__context: framework::structs::prefix::PrefixContext<'_>}.into())
             .unwrap();
+
+        function.sig.inputs.clear();
         function.sig.inputs.insert(0, arg);
         syn::parse::<Ident>(quote! {__context}.into()).unwrap()
     };
 
-    let arguments = &function.sig.inputs.iter().collect::<Vec<_>>();
-
     println!("command name : {}", function.sig.ident);
     println!("command description : {docstring:?}");
-    println!("function args : {arguments:#?}");
+    println!("context identifier : {context_ident:?}");
 
     function.to_token_stream().into()
 }
