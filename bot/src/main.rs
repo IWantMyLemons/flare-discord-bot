@@ -1,10 +1,12 @@
 use std::env;
 
 use framework::prelude::*;
+use macros::command;
 use serenity::{all::CreateMessage, prelude::*};
 
+#[command]
 /// Replies with "pong!"
-async fn ping<'a>(_: PrefixContext<'a>) -> impl Into<CommandResult> {
+async fn ping() -> impl Into<CommandResult> {
     CreateMessage::new().content("pong!")
 }
 

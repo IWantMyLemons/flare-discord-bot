@@ -9,9 +9,10 @@ pub struct FlareFrameworkBuilder {
 
 impl Default for FlareFrameworkBuilder {
     fn default() -> Self {
+        let commands = Vec::new();
         Self {
             prefix: ";".to_string(),
-            commands: Vec::new(),
+            commands,
         }
     }
 }

@@ -3,7 +3,7 @@ use crate::{
     structs::{prefix::PrefixContext, result::CommandResult},
 };
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PrefixCommand {
     pub name: String,
     pub description: String,
