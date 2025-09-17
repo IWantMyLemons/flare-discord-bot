@@ -1,8 +1,7 @@
 use proc_macro::TokenStream;
-use proc_macro2::Span;
 use quote::{ToTokens, quote};
 use syn::{
-    Expr, FnArg, Ident, ItemFn, Lit, Pat, PatIdent, PatType, Type, parse_macro_input, token::Colon,
+    Expr, FnArg, ItemFn, Lit, Type, parse_macro_input,
 };
 
 #[proc_macro_attribute]
