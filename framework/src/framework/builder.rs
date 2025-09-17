@@ -1,4 +1,5 @@
-use crate::{FlareFramework, structs::command::PrefixCommand};
+use crate::structs::command::PrefixCommand;
+use crate::framework::FlareFramework;
 
 #[derive(Debug)]
 pub struct FlareFrameworkBuilder {
@@ -20,8 +21,9 @@ impl FlareFrameworkBuilder {
         Self::default()
     }
     
-    pub fn prefix() {
-        
+    pub fn prefix(mut self, prefix: &str) -> Self {
+        self.prefix = prefix.to_string();
+        self
     }
 
     pub fn command(mut self, command: impl Into<PrefixCommand>) -> Self {

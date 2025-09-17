@@ -1,7 +1,18 @@
 use std::env;
 
-use framework::FlareFramework;
-use serenity::prelude::*;
+use framework::{
+    prelude::*,
+    structs::{command::PrefixCommand, prefix::PrefixContext},
+};
+use serenity::{all::CreateMessage, prelude::*};
+
+/// Replies with "pong!"
+async fn ping<'a>(_: PrefixContext<'a>) -> CommandResult {
+    CommandResult {
+        message: Some(CreateMessage::new().content("pong!")),
+        value: None,
+    }
+}
 
 #[tokio::main]
 async fn main() {
@@ -14,6 +25,12 @@ async fn main() {
     let mut client = Client::builder(token, intents)
         .framework(
             FlareFramework::builder()
+                .prefix(";")
+                .command(PrefixCommand {
+                    name: "ping".to_string(),
+                    description: "Replies with pong! :3".to_string(),
+                    callback: |x| Box::pin(ping(x)),
+                })
                 .build(),
         )
         .await
