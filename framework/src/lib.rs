@@ -1,9 +1,11 @@
-pub mod structs;
 pub mod framework;
 pub mod handlers;
+pub mod structs;
 
 pub mod prelude {
     pub use crate::framework::FlareFramework;
+    pub use crate::structs::command::PrefixCommand;
+    pub use crate::structs::prefix::PrefixContext;
     pub use crate::structs::result::CommandResult;
 }
 
