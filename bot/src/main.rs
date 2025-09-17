@@ -7,11 +7,8 @@ use framework::{
 use serenity::{all::CreateMessage, prelude::*};
 
 /// Replies with "pong!"
-async fn ping<'a>(_: PrefixContext<'a>) -> CommandResult {
-    CommandResult {
-        message: Some(CreateMessage::new().content("pong!")),
-        value: None,
-    }
+async fn ping<'a>(_: PrefixContext<'a>) -> impl Into<CommandResult> {
+    CreateMessage::new().content("pong!")
 }
 
 #[tokio::main]
@@ -29,7 +26,12 @@ async fn main() {
                 .command(PrefixCommand {
                     name: "ping".to_string(),
                     description: "Replies with pong! :3".to_string(),
-                    callback: |x| Box::pin(ping(x)),
+                    callback: |x| {
+                        Box::pin(async move {
+                            let res = ping(x).await;
+                            res.into()
+                        })
+                    },
                 })
                 .build(),
         )
