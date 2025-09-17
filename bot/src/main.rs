@@ -5,12 +5,6 @@ use macros::command;
 use serenity::{all::CreateMessage, prelude::*};
 
 #[command]
-/// Replies with "pong!"
-async fn ping() -> impl Into<CommandResult> {
-    CreateMessage::new().content("pong!")
-}
-
-#[command]
 /// Concats two strings together
 async fn cat(a: String, b: String) -> impl Into<CommandResult> {
     let res = format!("{a}{b}");
@@ -33,11 +27,11 @@ async fn main() {
             FlareFramework::builder()
                 .prefix(";")
                 .command(PrefixCommand {
-                    name: "ping".to_string(),
+                    name: "cat".to_string(),
                     description: "Replies with pong! :3".to_string(),
                     callback: |x| {
                         Box::pin(async move {
-                            let res = ping(x).await;
+                            let res = cat(x).await;
                             res.into()
                         })
                     },
