@@ -1,5 +1,3 @@
-use std::env;
-
 use serenity::{
     all::{Framework, FullEvent},
     prelude::*,
