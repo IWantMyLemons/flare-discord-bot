@@ -7,7 +7,7 @@ use serenity::{
 
 use crate::{
     framework::FlareFramework,
-    structs::prefix::PrefixContext,
+    structs::context::PrefixContext,
 };
 
 pub async fn run_command(

@@ -1,3 +1,3 @@
 pub mod command;
-pub mod result;
-pub mod prefix;
+pub mod command_result;
+pub mod context;
