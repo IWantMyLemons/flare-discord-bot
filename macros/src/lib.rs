@@ -1,11 +1,11 @@
 use proc_macro::TokenStream;
 use quote::{ToTokens, quote};
-use syn::{parse_macro_input, Expr, FnArg, Ident, ItemFn, Lit, Pat, Stmt, Type};
+use syn::{Expr, FnArg, Ident, ItemFn, Lit, Pat, Stmt, Type, parse_macro_input, spanned::Spanned};
 
 #[proc_macro_attribute]
 pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let mut function = parse_macro_input!(item as ItemFn);
-    let docstring = function.attrs.iter().find_map(|attribute| {
+    let _docstring = function.attrs.iter().find_map(|attribute| {
         if let syn::Meta::NameValue(nv) = &attribute.meta
             && nv.path.is_ident("doc")
             && let Expr::Lit(value) = &nv.value
@@ -54,23 +54,16 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
                 let statement: Stmt = syn::parse(quote! {
                     let #arg_ident: #arg_type = framework::handlers::message_binder::bind_message(&#context_ident.msg.content, #i, #arg_ident_quoted);
                 }.into()).unwrap();
-                
-                println!("statement : {}", statement.to_token_stream());
 
-                function
-                    .block
-                    .stmts
-                    .insert(0, statement);
+                function.block.stmts.insert(0, statement);
             }
-            FnArg::Receiver(_) => {
-                panic!("i have no clue how you got a receiver here")
+            FnArg::Receiver(receiver) => {
+                return syn::Error::new(receiver.span(), "self is not supported")
+                    .into_compile_error()
+                    .into();
             }
         }
     }
-
-    println!("command name : {}", function.sig.ident);
-    println!("command description : {docstring:?}");
-    println!("context identifier : {context_ident:?}");
 
     function.to_token_stream().into()
 }
