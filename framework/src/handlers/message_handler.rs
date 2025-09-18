@@ -6,7 +6,7 @@ use serenity::{
 };
 
 use crate::{
-    framework::FlareFramework,
+    framework::FlareFramework, structs::command_result::CommandResult,
     structs::context::PrefixContext,
 };
 
@@ -49,13 +49,21 @@ pub async fn run_command(
                 serenity_context: context,
             })
             .await;
-            if let Some(res_message) = result.message {
-                message
-                    .channel_id
-                    .send_message(context, res_message)
-                    .await
-                    .unwrap();
+            match result {
+                CommandResult::Ok(command_ok) => {
+                    if let Some(res_message) = command_ok.message {
+                        message
+                            .channel_id
+                            .send_message(context, res_message)
+                            .await
+                            .unwrap();
+                    }
+                }
+                CommandResult::Err(error_message) => {
+                    return Err(error_message);
+                }
             }
+
             Ok(())
         }
         None => {
