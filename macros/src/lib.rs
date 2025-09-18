@@ -15,7 +15,7 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
         } else {
             None
         }
-    });
+    }).unwrap_or(String::new());
 
     let mut args = function.sig.inputs.clone().into_iter();
 
