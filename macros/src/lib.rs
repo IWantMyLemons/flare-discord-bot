@@ -5,7 +5,7 @@ use syn::{Expr, FnArg, Ident, ItemFn, Lit, Pat, Stmt, Type, parse_macro_input, s
 #[proc_macro_attribute]
 pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let mut function = parse_macro_input!(item as ItemFn);
-    let _docstring = function.attrs.iter().find_map(|attribute| {
+    let docstring = function.attrs.iter().find_map(|attribute| {
         if let syn::Meta::NameValue(nv) = &attribute.meta
             && nv.path.is_ident("doc")
             && let Expr::Lit(value) = &nv.value
@@ -32,7 +32,7 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
         pat_ident.ident.clone()
     } else {
         let arg =
-            syn::parse(quote! {__context: framework::structs::prefix::PrefixContext<'_>}.into())
+            syn::parse(quote! {__context: ::framework::structs::prefix::PrefixContext<'_>}.into())
                 .unwrap();
 
         function.sig.inputs.clear();
@@ -52,7 +52,7 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
                 let arg_type = pat_type.ty;
                 let statement: Stmt = syn::parse(quote! {
-                    let #arg_ident: #arg_type = framework::handlers::message_binder::bind_message(&#context_ident.msg.content, #i, #arg_ident_quoted);
+                    let #arg_ident: #arg_type = ::framework::handlers::message_binder::bind_message(&#context_ident.msg.content, #i, #arg_ident_quoted);
                 }.into()).unwrap();
 
                 function.block.stmts.insert(0, statement);
@@ -65,5 +65,25 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
         }
     }
 
-    function.to_token_stream().into()
+    let mut res_stream = function.to_token_stream();
+
+    let function_ident = function.sig.ident;
+    let function_name = function_ident.to_string();
+
+    res_stream.extend(quote! {
+        ::framework::inventory::submit! {
+            PrefixCommand {
+                name: #function_name,
+                description: #docstring,
+                callback: |x| {
+                    Box::pin(async move {
+                        let res = #function_ident(x).await;
+                        res.into()
+                    })
+                },
+            }
+        }
+    });
+
+    res_stream.into()
 }

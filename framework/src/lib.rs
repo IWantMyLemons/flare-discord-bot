@@ -10,3 +10,7 @@ pub mod prelude {
 }
 
 pub type BoxFuture<'a, T> = std::pin::Pin<Box<dyn std::future::Future<Output = T> + Send + 'a>>;
+
+#[cfg(feature = "macros")]
+pub use inventory;
+pub use macros::command;

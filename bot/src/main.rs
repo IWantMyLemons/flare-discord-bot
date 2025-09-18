@@ -1,7 +1,7 @@
 use std::env;
 
 use framework::prelude::*;
-use macros::command;
+use framework::command;
 use serenity::{all::CreateMessage, prelude::*};
 
 #[command]
@@ -26,16 +26,7 @@ async fn main() {
         .framework(
             FlareFramework::builder()
                 .prefix(";")
-                .command(PrefixCommand {
-                    name: "cat".to_string(),
-                    description: "Replies with pong! :3".to_string(),
-                    callback: |x| {
-                        Box::pin(async move {
-                            let res = cat(x).await;
-                            res.into()
-                        })
-                    },
-                })
+                .macro_commands()
                 .build(),
         )
         .await

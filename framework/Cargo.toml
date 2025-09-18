@@ -5,6 +5,12 @@ edition = "2024"
 
 [dependencies]
 tokio = {version = "1.47", features = ["macros", "rt-multi-thread"]}
+inventory = { version = "0.3.21", optional = true }
+macros = { path = "../macros", optional = true }
+
+[features]
+default = []
+macros = ["dep:inventory", "dep:macros"]
 
 [dependencies.serenity]
 version = "0.12"
