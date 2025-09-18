@@ -32,8 +32,8 @@ pub async fn run_command(
     else {
         let embed = CreateEmbed::new()
             .color(Color::from_rgb(230, 69, 83))
-            .title("Command not found :/")
-            .description("imagine i suggest the correct command here in case of a typo");
+            .title("No command..?")
+            .description("I think you forgot to write a command after `;`, try writing `;help`");
         let error_message = CreateMessage::new().add_embed(embed);
         return Err(error_message);
     };
