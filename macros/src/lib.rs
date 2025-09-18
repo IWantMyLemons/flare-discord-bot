@@ -32,7 +32,7 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
         pat_ident.ident.clone()
     } else {
         let arg =
-            syn::parse(quote! {__context: ::framework::structs::prefix_context::PrefixContext<'_>}.into())
+            syn::parse(quote! {__context: ::framework::structs::context::PrefixContext<'_>}.into())
                 .unwrap();
 
         function.sig.inputs.clear();
