@@ -72,7 +72,7 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     res_stream.extend(quote! {
         ::framework::inventory::submit! {
-            PrefixCommand {
+            ::framework::structs::command::PrefixCommand {
                 name: #function_name,
                 description: #docstring,
                 callback: |x| {
