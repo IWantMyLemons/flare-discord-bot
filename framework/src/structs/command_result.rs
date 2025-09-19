@@ -11,7 +11,15 @@ pub struct CommandOk {
     pub message: Option<CreateMessage>,
     pub value: Option<String>,
 }
-
+impl CommandOk {
+    /// Shorthand for setting both value and a message witih the same content
+    pub fn from_same(value: String) -> Self {
+        Self {
+            message: Some(CreateMessage::new().content(value.clone())),
+            value: Some(value),
+        }
+    }
+}
 
 impl From<CommandOk> for CommandResult {
     fn from(command_ok: CommandOk) -> Self {
