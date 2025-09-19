@@ -1,18 +1,9 @@
 use std::env;
 
-use framework::command;
-use framework::prelude::*;
-use serenity::{all::CreateMessage, prelude::*};
+mod commands;
 
-#[command]
-/// Concats two strings together
-async fn cat(a: String, b: String) -> impl Into<CommandResult> {
-    let res = format!("{a}{b}");
-    CommandOk {
-        message: Some(CreateMessage::new().content(res.clone())),
-        value: Some(res),
-    }
-}
+use framework::prelude::*;
+use serenity::prelude::*;
 
 #[tokio::main]
 async fn main() {
