@@ -1,5 +1,6 @@
 use crate::{
-    structs::{command_result::CommandResult, context::PrefixContext}, BoxFuture
+    BoxFuture,
+    structs::{command_result::CommandResult, context::PrefixContext},
 };
 
 #[derive(Clone, Debug)]
