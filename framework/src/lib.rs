@@ -13,4 +13,5 @@ pub type BoxFuture<'a, T> = std::pin::Pin<Box<dyn std::future::Future<Output = T
 
 #[cfg(feature = "macros")]
 pub use inventory;
+#[cfg(feature = "macros")]
 pub use macros::command;

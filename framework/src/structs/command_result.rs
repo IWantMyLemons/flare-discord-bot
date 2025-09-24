@@ -21,6 +21,15 @@ impl CommandOk {
     }
 }
 
+impl From<Result<CommandOk, CreateMessage>> for CommandResult {
+    fn from(result: Result<CommandOk, CreateMessage>) -> Self {
+        match result {
+            Ok(command_ok) => Self::Ok(command_ok),
+            Err(error_message) => Self::Err(error_message),
+        }
+    }
+}
+
 impl From<CommandOk> for CommandResult {
     fn from(command_ok: CommandOk) -> Self {
         Self::Ok(command_ok)

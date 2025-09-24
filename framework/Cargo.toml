@@ -9,7 +9,7 @@ inventory = { version = "0.3.21", optional = true }
 macros = { path = "../macros", optional = true }
 
 [features]
-default = []
+default = ["serenity/rustls_backend"]
 macros = ["dep:inventory", "dep:macros"]
 
 [dependencies.serenity]
@@ -18,4 +18,5 @@ default-features = false
 features = [
     "client",
     "framework",
+    "gateway",
 ]

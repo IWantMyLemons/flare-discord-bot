@@ -53,14 +53,14 @@ impl FlareFrameworkBuilder {
     }
 
     #[cfg(feature = "macros")]
-    /// Adds commands defined by [`framework::command`]
+    /// Adds commands defined by `framework::command`
     pub fn macro_commands(&mut self) -> &mut Self {
         self.commands
             .extend(inventory::iter::<PrefixCommand>.into_iter().cloned());
         self
     }
 
-    /// Builds the framework, read [`FlareFrameworkBuilder`] for `Default`s
+    /// Builds the framework, read [`FlareFrameworkBuilder`] for `Default` implementation
     pub fn build(&self) -> FlareFramework {
         FlareFramework {
             prefix: self.prefix.clone(),

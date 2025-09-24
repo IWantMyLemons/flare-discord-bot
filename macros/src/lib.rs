@@ -5,17 +5,21 @@ use syn::{Expr, FnArg, Ident, ItemFn, Lit, Pat, Stmt, Type, parse_macro_input, s
 #[proc_macro_attribute]
 pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let mut function = parse_macro_input!(item as ItemFn);
-    let docstring = function.attrs.iter().find_map(|attribute| {
-        if let syn::Meta::NameValue(nv) = &attribute.meta
-            && nv.path.is_ident("doc")
-            && let Expr::Lit(value) = &nv.value
-            && let Lit::Str(s) = &value.lit
-        {
-            Some(s.token().to_string())
-        } else {
-            None
-        }
-    }).unwrap_or(String::new());
+    let docstring = function
+        .attrs
+        .iter()
+        .find_map(|attribute| {
+            if let syn::Meta::NameValue(nv) = &attribute.meta
+                && nv.path.is_ident("doc")
+                && let Expr::Lit(value) = &nv.value
+                && let Lit::Str(s) = &value.lit
+            {
+                Some(s.token().to_string())
+            } else {
+                None
+            }
+        })
+        .unwrap_or(String::new());
 
     let mut args = function.sig.inputs.clone().into_iter();
 
@@ -40,6 +44,13 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
         syn::parse::<Ident>(quote! {__context}.into()).unwrap()
     };
 
+    let mut statements: Vec<Stmt> = Vec::new();
+
+    let arg_state = syn::parse(quote! {
+        let mut __arg_state = ::framework::handlers::message_binder::ArgState::from_message(&#context_ident.msg.content);
+    }.into()).unwrap();
+    statements.push(arg_state);
+
     for (i, arg) in args.enumerate() {
         match arg {
             FnArg::Typed(pat_type) => {
@@ -52,10 +63,13 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
                 let arg_type = pat_type.ty;
                 let statement: Stmt = syn::parse(quote! {
-                    let #arg_ident: #arg_type = ::framework::handlers::message_binder::bind_message(&#context_ident.msg.content, #i, #arg_ident_quoted);
+                    let #arg_ident = match __arg_state.bind::<#arg_type>(#arg_ident_quoted, #i) {
+                        Ok(__arg_ok) => __arg_ok,
+                        Err(__arg_err) => return ::framework::structs::command_result::CommandResult::Err(*__arg_err),
+                    };
                 }.into()).unwrap();
 
-                function.block.stmts.insert(0, statement);
+                statements.push(statement);
             }
             FnArg::Receiver(receiver) => {
                 return syn::Error::new(receiver.span(), "self is not supported")
@@ -64,6 +78,9 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
             }
         }
     }
+
+    statements.extend(function.block.stmts);
+    function.block.stmts = statements;
 
     let mut res_stream = function.to_token_stream();
 
