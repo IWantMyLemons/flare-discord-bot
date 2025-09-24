@@ -30,7 +30,7 @@ impl<'a> ArgState<'a> {
 }
 
 /// Splits a string into blocks, any text within a quotes `""` is one block
-fn split_quotes(s: &str) -> impl Iterator<Item = String> {
+fn split_quotes(s: &str) -> Vec<String> {
     #[derive(Debug, Default)]
     struct CharState {
         last_word: String,
@@ -40,8 +40,8 @@ fn split_quotes(s: &str) -> impl Iterator<Item = String> {
     }
 
     (s.to_string() + " ")
-        .char_indices()
-        .scan(CharState::default(), move |char_state, (i, c)| {
+        .chars()
+        .scan(CharState::default(), move |char_state, c| {
             if char_state.was_escaped {
                 char_state.was_escaped = false;
                 Some(None)
@@ -62,11 +62,13 @@ fn split_quotes(s: &str) -> impl Iterator<Item = String> {
                 char_state.was_whitespace = true;
                 Some(Some(word))
             } else {
+                char_state.last_word.push(c);
                 char_state.was_whitespace = false;
                 Some(None)
             }
         })
         .flatten()
+        .collect()
 }
 
 #[cfg(test)]
@@ -75,20 +77,19 @@ mod tests {
 
     #[test]
     fn split_quotes_download() {
-        let mut blocks = split_quotes(
+        let blocks = split_quotes(
             r##";download https://www.youtube.com/watch?v=8he5TcZ4Bn8 "#pooltoy #suit #toothless" --title="toothless suit i carnally want" --extract-audio"##,
         );
 
-        assert_eq!(blocks.next(), Some(";download".to_string()));
         assert_eq!(
-            blocks.next(),
-            Some("https://www.youtube.com/watch?v=8he5TcZ4Bn8".to_string())
+            blocks,
+            vec![
+                ";download",
+                "https://www.youtube.com/watch?v=8he5TcZ4Bn8",
+                "#pooltoy #suit #toothless",
+                r#"--title=toothless suit i carnally want"#,
+                "--extract-audio",
+            ]
         );
-        assert_eq!(blocks.next(), Some("#pooltoy #suit #toothless".to_string()));
-        assert_eq!(
-            blocks.next(),
-            Some(r#"--title=toothless suit i carnally want"#.to_string())
-        );
-        assert_eq!(blocks.next(), Some("--extract-audio".to_string()));
     }
 }
