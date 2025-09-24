@@ -4,15 +4,33 @@ use serenity::all::CreateMessage;
 
 #[derive(Debug)]
 /// A state relating to arguments of a command
-pub struct ArgState<'a> {
-    _positionals: Vec<&'a str>,
-    _named: HashMap<&'a str, &'a str>,
+pub struct ArgState {
+    positionals: Vec<String>,
+    named: HashMap<String, String>,
 }
 
-impl<'a> ArgState<'a> {
+impl ArgState {
     /// Parses a message to get it's arguments
-    pub fn from_message(_s: &str) -> Self {
-        todo!()
+    pub fn from_message(s: &str) -> Self {
+        let args = &split_quotes(s)[1..];
+        let mut res = Self {
+            positionals: Vec::new(),
+            named: HashMap::new(),
+        };
+
+        for arg in args {
+            if let Some(arg_text) = arg.strip_prefix("--") {
+                if let Some((key, value)) = arg_text.split_once('=') {
+                    res.named.insert(key.to_string(), value.to_string());
+                } else {
+                    res.named.insert(arg_text.to_string(), "true".to_string());
+                }
+            } else {
+                res.positionals.push(arg.to_string());
+            }
+        }
+        
+        res
     }
 
     /// Attempts to get an argument, will otherwise return an error message
@@ -73,7 +91,7 @@ fn split_quotes(s: &str) -> Vec<String> {
 
 #[cfg(test)]
 mod tests {
-    use crate::handlers::message_binder::split_quotes;
+    use crate::handlers::message_binder::{split_quotes, ArgState};
 
     #[test]
     fn split_quotes_download() {
@@ -91,5 +109,25 @@ mod tests {
                 "--extract-audio",
             ]
         );
+    }
+    
+    #[test]
+    fn argstate_parsing() {
+        let arg_state = ArgState::from_message(
+            r##";download https://www.youtube.com/watch?v=8he5TcZ4Bn8 "#pooltoy #suit #toothless" --title="toothless suit i carnally want" --extract-audio"##,
+        );
+
+        println!("{arg_state:?}");
+
+        assert_eq!(
+            arg_state.positionals,
+            vec![
+                "https://www.youtube.com/watch?v=8he5TcZ4Bn8",
+                "#pooltoy #suit #toothless",
+            ]
+        );
+
+        assert_eq!(arg_state.named.get("title").unwrap(), "toothless suit i carnally want");
+        assert_eq!(arg_state.named.get("extract-audio").unwrap(), "true");
     }
 }
