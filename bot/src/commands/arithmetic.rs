@@ -56,3 +56,4 @@ async fn tan(x: f64) -> CommandResult {
     let res = x.tan().to_string();
     CommandOk::from_same(res).into()
 }
+
