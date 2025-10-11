@@ -63,7 +63,7 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
                 let arg_type = pat_type.ty;
                 let statement: Stmt = syn::parse(quote! {
-                    let #arg_ident = match __arg_state.bind::<#arg_type>(#arg_ident_quoted, #i) {
+                    let #arg_ident = match __arg_state.bind::<#arg_type, _>(#arg_ident_quoted, #i) {
                         Ok(__arg_ok) => __arg_ok,
                         Err(__arg_err) => return ::framework::structs::command_result::CommandResult::Err(*__arg_err),
                     };
@@ -78,6 +78,12 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
             }
         }
     }
+
+    statements.push(syn::parse(quote! {
+        if let Err(e) = __arg_state.finish() {
+            return ::framework::structs::command_result::CommandResult::Err(*e);
+        }
+    }.into()).unwrap());
 
     statements.extend(function.block.stmts);
     function.block.stmts = statements;
