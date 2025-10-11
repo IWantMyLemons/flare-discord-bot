@@ -31,9 +31,9 @@ async fn divide(a: f64, b: f64) -> CommandResult {
 
 #[command]
 /// Returns the value of pi
-async fn pi() -> impl Into<CommandResult> {
+async fn pi() -> CommandResult {
     let res = std::f64::consts::PI.to_string();
-    CommandOk::from_same(res)
+    CommandOk::from_same(res).into()
 }
 
 #[command]
