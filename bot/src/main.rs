@@ -11,7 +11,7 @@ use serenity::prelude::*;
 async fn main() {
     dotenvy::dotenv().expect(".env file not found");
 
-    let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
+    let token = env::var("DISCORD_TOKEN").expect("Expected DISCORD_TOKEN token in the environment");
 
     let intents = GatewayIntents::GUILD_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
 

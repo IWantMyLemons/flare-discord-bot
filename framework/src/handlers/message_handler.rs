@@ -19,7 +19,9 @@ pub async fn run_command(
         return Ok(());
     }
 
-    if message.channel_id != env::var("DEBUG_CHANNEL").unwrap().parse::<u64>().unwrap() {
+    if env::var("DEBUG_CHANNEL")
+        .is_ok_and(|debug_channel| message.channel_id != debug_channel.parse::<u64>().unwrap())
+    {
         return Ok(());
     }
 
