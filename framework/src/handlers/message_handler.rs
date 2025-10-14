@@ -15,7 +15,7 @@ pub async fn run_command(
     context: &Context,
     message: &Message,
 ) -> Result<(), CreateMessage> {
-    if !message.content.starts_with(&framework.prefix) {
+    if !message.content.starts_with(&framework.prefix) || message.author.bot {
         return Ok(());
     }
 
