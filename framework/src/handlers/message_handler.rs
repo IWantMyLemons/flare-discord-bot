@@ -19,12 +19,6 @@ pub async fn run_command(
         return Ok(());
     }
 
-    if env::var("DEBUG_CHANNEL")
-        .is_ok_and(|debug_channel| message.channel_id != debug_channel.parse::<u64>().unwrap())
-    {
-        return Ok(());
-    }
-
     let Some(command_name) = message
         .content
         .strip_prefix(&framework.prefix)
