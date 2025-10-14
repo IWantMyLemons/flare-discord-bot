@@ -1,5 +1,3 @@
-use std::env;
-
 use serenity::{
     all::{Color, CreateEmbed, CreateMessage, Message},
     prelude::*,
