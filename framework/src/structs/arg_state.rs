@@ -11,7 +11,7 @@ pub struct ArgState {
 
 impl ArgState {
     /// Parses a message to get it's arguments
-    pub fn from_message(s: &str) -> Self {
+    pub fn from_message(s: &str, _func_args: &[&str]) -> Self {
         let args = &split_quotes(s)[1..];
         let mut res = Self {
             positionals: HashMap::new(),
@@ -131,7 +131,7 @@ fn err_message(s: String) -> CreateMessage {
 
 #[cfg(test)]
 mod tests {
-    use crate::handlers::message_binder::{ArgState, split_quotes};
+    use super::{ArgState, split_quotes};
 
     #[test]
     fn split_quotes_download() {
@@ -155,6 +155,7 @@ mod tests {
     fn argstate_parsing() {
         let arg_state = ArgState::from_message(
             r##";download https://www.youtube.com/watch?v=8he5TcZ4Bn8 "#pooltoy #suit #toothless" --title="toothless suit i carnally want" --extract-audio"##,
+            &["link", "tags", "title", "extract-audio"]
         );
 
         println!("{arg_state:?}");

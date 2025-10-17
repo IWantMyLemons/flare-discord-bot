@@ -44,11 +44,23 @@ pub fn command(_attr: TokenStream, item: TokenStream) -> TokenStream {
         syn::parse::<Ident>(quote! {__context}.into()).unwrap()
     };
 
+    let arg_strings = args.clone().map(|arg: FnArg| match arg {
+        FnArg::Receiver(_) => todo!(),
+        FnArg::Typed(pat_type) => {
+            let Pat::Ident(pat_ident) = pat_type.pat.as_ref() else {
+                todo!()
+            };
+            pat_ident.ident.to_string()
+        }
+    });
+    let args_string = quote! {[ #(#arg_strings),* ]};
+
     let mut statements: Vec<Stmt> = Vec::new();
 
     let arg_state = syn::parse(quote! {
-        let mut __arg_state = ::framework::handlers::message_binder::ArgState::from_message(&#context_ident.msg.content);
+        let mut __arg_state = ::framework::structs::arg_state::ArgState::from_message(&#context_ident.msg.content, &#args_string);
     }.into()).unwrap();
+    
     statements.push(arg_state);
 
     for (i, arg) in args.enumerate() {
